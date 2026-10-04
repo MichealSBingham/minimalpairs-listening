@@ -16,13 +16,14 @@ function shuffle<T>(items: readonly T[], random: Random): T[] {
 const normalize = (word: string) => word.normalize('NFC').trim().toLocaleLowerCase();
 function testCandidates(pairs: readonly Pair[], reference: Pair, target: WordIndex): Pair[] {
   const references = new Set(reference.words.map(word => normalize(word.text)));
-  return pairs.filter(pair => pair.id !== reference.id && (pair.abx?.trialGroup || 'all') === (reference.abx?.trialGroup || 'all') && !references.has(normalize(pair.words[target].text)));
+  const sounds = new Set(reference.words.map(word => (word.ipa || '').replace(/[\/\[\]\sˈˌ.]/g, '')).filter(Boolean));
+  return pairs.filter(pair => pair.id !== reference.id && (pair.abx?.trialGroup || 'all') === (reference.abx?.trialGroup || 'all') && !references.has(normalize(pair.words[target].text)) && !sounds.has((pair.words[target].ipa || '').replace(/[\/\[\]\sˈˌ.]/g, '')));
 }
 
 /** Cross-word ABX: A/B are references; X is a new word in the target category. */
-export function buildSession(pairs: readonly Pair[], length = 12, random: Random = Math.random): PracticeQuestion[] {
+export function buildSession(pairs: readonly Pair[], length = 12, random: Random = Math.random, referenceAvailable: (pair: Pair) => boolean = () => true): PracticeQuestion[] {
   if (!pairs.length || length <= 0) return [];
-  const eligiblePairs = pairs.filter(pair => testCandidates(pairs, pair, 0).length && testCandidates(pairs, pair, 1).length);
+  const eligiblePairs = pairs.filter(pair => referenceAvailable(pair) && testCandidates(pairs, pair, 0).length && testCandidates(pairs, pair, 1).length);
   if (!eligiblePairs.length) return [];
   const count = Math.floor(length);
   const selectedPairs: Pair[] = [];
