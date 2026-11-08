@@ -2,7 +2,9 @@
 
 An offline ear-training game for English learners who want to hear the difference between words such as *ship* and *sheep*. Listen to A and B and then a different word, X. Pick the example with the same vowel. The game reveals the words and replays the correct match.
 
-## Play
+[Can you hear *ship* vs *sheep*? Play the listening challenge in your browser.](https://minimalpairs.co/challenge/ship-vs-sheep?utm_source=github&utm_medium=referral&utm_campaign=offline-listening)
+
+## Play offline
 
 Use Node.js 22.18 or later and a local English voice. macOS provides the `say` command. Linux users need eSpeak installed as `espeak`. From a terminal in the repository, run:
 
